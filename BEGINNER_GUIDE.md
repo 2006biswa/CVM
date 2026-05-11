@@ -10,7 +10,7 @@ Here is the exact order you will follow to build this project, step-by-step.
 ---
 
 ## STEP 1: The Lexer (The Reader)
-**Where you will work:** `src/lexer/Token.h`, `src/lexer/Lexer.h`, `src/lexer/Lexer.cpp`
+**Where you will work:** `lexer/Token.h`, `lexer/Lexer.h`, `lexer/Lexer.cpp`
 
 **The Concept:** The computer sees code as one giant string of characters: `'l', 'e', 't', ' ', 'x', ...`
 The Lexer's job is to read these individual characters and group them into logical "words" called **Tokens**.
@@ -32,7 +32,7 @@ The Lexer's job is to read these individual characters and group them into logic
 ---
 
 ## STEP 2: The Parser (The Grammarian)
-**Where you will work:** `src/parser/AST.h`, `src/parser/Parser.h`, `src/parser/Parser.cpp`
+**Where you will work:** `parser/AST.h`, `parser/Parser.h`, `parser/Parser.cpp`
 
 **The Concept:** The Lexer gave us a list of words. But words don't have meaning without grammar. The Parser checks if the grammar is correct and organizes the words into a tree structure called an **Abstract Syntax Tree (AST)**.
 
@@ -51,7 +51,7 @@ The Lexer's job is to read these individual characters and group them into logic
 ---
 
 ## STEP 3: The Compiler (The Translator)
-**Where you will work:** `src/compiler/Compiler.h`, `src/compiler/Compiler.cpp`
+**Where you will work:** `compiler/Compiler.h`, `compiler/Compiler.cpp`
 
 **The Concept:** Now we have a beautiful tree. But computers and Virtual Machines don't understand trees. They only understand a flat list of commands called **Bytecode** or **Opcodes** (those `OP_` things!). The Compiler travels through the tree and translates it into Opcodes.
 
@@ -67,7 +67,7 @@ The Lexer's job is to read these individual characters and group them into logic
 ---
 
 ## STEP 4: The Virtual Machine (The Executioner)
-**Where you will work:** `src/vm/Opcode.h`, `src/vm/VM.h`, `src/vm/VM.cpp`, `src/common/Value.h`
+**Where you will work:** `vm/Opcode.h`, `vm/VM.h`, `vm/VM.cpp`, `common/Value.h`
 
 **The Concept:** The VM is a fake computer inside your real computer. It takes the array of commands the Compiler generated and actually executes the math and logic using a **Stack** (like a stack of plates).
 
@@ -84,7 +84,7 @@ The Lexer's job is to read these individual characters and group them into logic
 ---
 
 ## STEP 5: Tying it all together
-**Where you will work:** `src/main.cpp`
+**Where you will work:** `main.cpp`
 
 **The Concept:** Turn on the factory conveyor belt!
 
