@@ -64,5 +64,38 @@ public:
     void accept(ASTVisitor& visitor) override; // Allows the visitor to enter this node
 };
 
+// --- STATEMENT NODES (Actions that DO something, like 'print x;') ---
+
+class PrintStmt : public ASTNode {
+public:
+    std::unique_ptr<ASTNode> expression; // The thing we want to print out to the screen
+
+    PrintStmt(std::unique_ptr<ASTNode> expression) : expression(std::move(expression)) {}
+
+    void accept(ASTVisitor& visitor) override; // Allows the visitor to enter this node
+};
+
+class VarDecl : public ASTNode {
+public:
+    Token name;                          // The name of our new variable
+    std::unique_ptr<ASTNode> initializer; // The value we are assigning to it (can be null!)
+
+    VarDecl(Token name, std::unique_ptr<ASTNode> initializer)
+        : name(name), initializer(std::move(initializer)) {}
+
+    void accept(ASTVisitor& visitor) override; // Allows the visitor to enter this node
+};
+
+class BlockStmt : public ASTNode {
+public:
+    std::vector<std::unique_ptr<ASTNode>> statements; // A list of statements grouped inside { }
+
+    BlockStmt(std::vector<std::unique_ptr<ASTNode>> statements)
+        : statements(std::move(statements)) {}
+
+    void accept(ASTVisitor& visitor) override; // Allows the visitor to enter this node
+};
+
+
 
 #endif // AST_H
