@@ -39,7 +39,29 @@ private:
     std::unique_ptr<ASTNode> factor();
     std::unique_ptr<ASTNode> primary();
 
+   
+    //  Declare helper methods: to help the parse() build out the branches of the tree
     
+    // Checks if the current Token matches what we want. If yes, it grabs it and moves forward!
+    bool match(std::initializer_list<TokenType> types);   // use of the feature if initializer_list in order to prevent from writing  that if conditons for all the several tokens
+    
+    // Just peeks at the current Token to see if it matches, but DOES NOT move forward.
+    bool check(TokenType type);
+    
+    // Grabs the current Token to use it, and moves the finger forward by 1.
+    Token advance();
+    
+    // Checks if we have hit the very end of the file.
+    bool isAtEnd();
+    
+    // The strict teacher! It demands a specific Token (like a ';'). If it's missing, it crashes the compiler!
+    Token consume(TokenType type, const std::string& message);
+    
+    // Looks at the Token the finger is currently pointing at.
+    Token peek();
+    
+    // Looks at the Token we just finished processing (the one behind the finger).
+    Token previous();
 };
 
 #endif // PARSER_H
