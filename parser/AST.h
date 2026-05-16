@@ -46,5 +46,23 @@ public:
     void accept(ASTVisitor& visitor) override; // Allows the visitor to enter this node
 };
 
+class LiteralExpr : public ASTNode {
+public:
+    Token value; // Holds a raw value, like the number '42'
+
+    LiteralExpr(Token value) : value(value) {}
+
+    void accept(ASTVisitor& visitor) override; // Allows the visitor to enter this node
+};
+
+class VariableExpr : public ASTNode {
+public:
+    Token name; // Holds the name of the variable we want to use (e.g., 'myScore')
+
+    VariableExpr(Token name) : name(name) {}
+
+    void accept(ASTVisitor& visitor) override; // Allows the visitor to enter this node
+};
+
 
 #endif // AST_H
