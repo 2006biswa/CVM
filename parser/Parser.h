@@ -3,44 +3,43 @@
 
 #include <vector>
 #include <memory>
+#include <string>
+#include <initializer_list>
 #include "../lexer/Token.h"
 #include "AST.h"
 
 class Parser {
 public:
     Parser(const std::vector<Token>& tokens);
-    std::unique_ptr<ASTNode> parse();
+    
+    
+    std::unique_ptr<ASTNode> parse();  // kind of the single button to start the entire  parsing process like turning the tokens into 2-D AST tree
 
 private:
     std::vector<Token> tokens;
     
-    // ---------------------------------------------------------
-    // TODO 1: Add internal state tracking:
-    // - 'current': integer index pointing to the next token to be parsed.
-    // ---------------------------------------------------------
     
-    // ---------------------------------------------------------
+    //  Add internal state tracking:
+    
+    
+    int current = 0; // The 'finger' pointing at the current token we are looking at that is to be parsed
+    
+   // following recursive descent
     // TODO 2: Declare grammar rule methods (Recursive Descent).
     // These methods correspond to your language grammar:
-    // - program()      -> entry point, returns a list of statements.
-    // - declaration()  -> parses variable declarations (let) or statements.
-    // - statement()    -> parses print, if, while, or blocks.
-    // - expression()   -> parses general expressions (delegates to equality).
-    // - equality()     -> parses '=='
-    // - comparison()   -> parses '<'
-    // - term()         -> parses '+' and '-'
-    // - factor()       -> parses '*' and '/'
-    // - primary()      -> parses numbers, booleans, identifiers, and grouping ().
-    // ---------------------------------------------------------
+   
+    std::vector<std::unique_ptr<ASTNode>> program();
+    std::unique_ptr<ASTNode> declaration();
+    std::unique_ptr<ASTNode> statement();
+    
+    std::unique_ptr<ASTNode> expression();
+    std::unique_ptr<ASTNode> equality();
+    std::unique_ptr<ASTNode> comparison();
+    std::unique_ptr<ASTNode> term();
+    std::unique_ptr<ASTNode> factor();
+    std::unique_ptr<ASTNode> primary();
 
-    // ---------------------------------------------------------
-    // TODO 3: Declare helper methods:
-    // - match(TokenType... types): checks if current token matches any in the list, advances if true.
-    // - check(TokenType type): checks current token type without advancing.
-    // - advance(): consumes and returns the current token.
-    // - isAtEnd(): checks if we've reached END_OF_FILE.
-    // - consume(TokenType type, string message): expects a specific token or throws a parse error.
-    // ---------------------------------------------------------
+    
 };
 
 #endif // PARSER_H
