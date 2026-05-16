@@ -119,6 +119,38 @@ public:
     void accept(ASTVisitor& visitor) override; // Allows the visitor to enter this node
 };
 
+// structure for the Visitor
+class ASTVisitor {
+public:
+    virtual void visit(BinaryExpr* expr) = 0; 
+    virtual void visit(LiteralExpr* expr) = 0; 
+    virtual void visit(VariableExpr* expr) = 0; 
+                                                            // a description for a visitor that it must write how to handle every single type of node
+                                                            // we did this in order to prevent crashing of compiler
+    virtual void visit(PrintStmt* stmt) = 0; 
+    virtual void visit(VarDecl* stmt) = 0; 
+    virtual void visit(BlockStmt* stmt) = 0; 
+    virtual void visit(IfStmt* stmt) = 0;  
+    virtual void visit(WhileStmt* stmt) = 0; 
+    
+    virtual ~ASTVisitor() = default;
+};
 
+
+// INLINE IMPLEMENTATIONS
+// We put these at the bottom so they know what 'ASTVisitor' is
+
+//the forward declarations don;t work here because we are not only declaring the accept function rather we are doing something inside it 
+
+// the below line means ""Here I am! Read my data and do your job!""
+
+inline void BinaryExpr::accept(ASTVisitor& visitor) { visitor.visit(this); }
+inline void LiteralExpr::accept(ASTVisitor& visitor) { visitor.visit(this); }
+inline void VariableExpr::accept(ASTVisitor& visitor) { visitor.visit(this); }
+inline void PrintStmt::accept(ASTVisitor& visitor) { visitor.visit(this); }
+inline void VarDecl::accept(ASTVisitor& visitor) { visitor.visit(this); }
+inline void BlockStmt::accept(ASTVisitor& visitor) { visitor.visit(this); }
+inline void IfStmt::accept(ASTVisitor& visitor) { visitor.visit(this); }
+inline void WhileStmt::accept(ASTVisitor& visitor) { visitor.visit(this); }
 
 #endif // AST_H
