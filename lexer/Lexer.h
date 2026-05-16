@@ -13,21 +13,24 @@ public:
 private:
     std::string source;
     
-    // ---------------------------------------------------------
-    // TODO 1: Add internal state tracking variables:
-    // - 'start': points to the first character in the lexeme being scanned.
-    // - 'current': points to the character currently being considered.
-    // - 'line': tracks the current line number for error reporting.
-    // ---------------------------------------------------------
+    std::vector<Token> tokens; // Stores the final list of generated tokens
 
-    // ---------------------------------------------------------
-    // TODO 2: Declare helper methods for character scanning:
-    // - bool isAtEnd(): checks if 'current' >= source.length().
-    // - char advance(): consumes the next character and returns it.
-    // - bool match(char expected): conditionally consumes a character.
-    // - char peek(): looks at the current character without consuming it.
-    // - void addToken(TokenType type): creates a token and adds it to the list.
-    // ---------------------------------------------------------
+    
+    //  Adding internal state tracking variables:
+   
+    int start = 0;   // Points to the first character of the word being read
+    int current = 0; // Points to the specific character we are looking at right now
+    int line = 1;    // Tracks the current line number for error messages
+
+    
+    //Declare helper methods for character scanning:
+   
+    
+    bool isAtEnd();                // Checks if we have reached the end of the file
+    char advance();                // Moves forward one character and returns it
+    bool match(char expected);     // Checks the next character and consumes it only if it matches
+    char peek();                   // Looks at the current character without moving forward
+    void addToken(TokenType type); // Packages the word into a Token and saves it in 'tokens'
 };
 
 #endif // LEXER_H

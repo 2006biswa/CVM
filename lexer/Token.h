@@ -3,31 +3,31 @@
 
 #include <string>
 
-// ---------------------------------------------------------
-// TODO 1: Define an enumeration for all Token types.
-// Based on the project scope, you will need:
-// - Single-character tokens: PLUS, MINUS, STAR, SLASH, EQUAL, LESS, etc.
-// - Two-character tokens: EQUAL_EQUAL.
-// - Literals: IDENTIFIER, NUMBER (Integers), BOOLEAN (true/false).
-// - Keywords: LET, PRINT, IF, ELSE, WHILE, INPUT.
-// - Special: END_OF_FILE.
-// ---------------------------------------------------------
+// creating TOKENS(Vocabulary)
+
 enum class TokenType {
-    // Add token types here
+    // Single-character tokens
+    LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
+    PLUS, MINUS, STAR, SLASH, EQUAL, LESS, SEMICOLON,
+
+    // Two-character tokens
+    EQUAL_EQUAL,
+
+    // Literals
+    IDENTIFIER, NUMBER,
+
+    // Keywords
+    LET, PRINT, INPUT, IF, ELSE, WHILE, TRUE_KW, FALSE_KW,
+
+    // Special
     END_OF_FILE
 };
 
-// ---------------------------------------------------------
-// TODO 2: Define the Token structure.
-// A Token should store:
-// - The TokenType.
-// - The literal string value (lexeme) exactly as it appeared in code.
-// - The line number where it was found (useful for error reporting).
-// ---------------------------------------------------------
+//Token structure
 struct Token {
     TokenType type;
     std::string lexeme;
-    int line;
+    int line;  // for error reporting  
 };
 
 #endif // TOKEN_H
