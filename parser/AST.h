@@ -32,6 +32,19 @@ public:
 // Define specific AST Node classes inheriting from ASTNode.
 
 
+// --- EXPRESSION NODES (Things that produce a value, like 5 + 5) ---
+
+class BinaryExpr : public ASTNode {
+public:
+    std::unique_ptr<ASTNode> left;  // The left side of the math equation (e.g., the '1' in 1 + 2)
+    Token op;                       // The math operator (e.g., the '+' in 1 + 2)
+    std::unique_ptr<ASTNode> right; // The right side of the math equation (e.g., the '2' in 1 + 2)
+
+    BinaryExpr(std::unique_ptr<ASTNode> left, Token op, std::unique_ptr<ASTNode> right)
+        : left(std::move(left)), op(op), right(std::move(right)) {}           //constructor and using move because single owner
+
+    void accept(ASTVisitor& visitor) override; // Allows the visitor to enter this node
+};
 
 
 #endif // AST_H
