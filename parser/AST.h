@@ -96,6 +96,29 @@ public:
     void accept(ASTVisitor& visitor) override; // Allows the visitor to enter this node
 };
 
+class IfStmt : public ASTNode {
+public:
+    std::unique_ptr<ASTNode> condition;  // The test (e.g., x < 10)
+    std::unique_ptr<ASTNode> thenBranch; // What to run if the test is true
+    std::unique_ptr<ASTNode> elseBranch; // What to run if false (can be null!)
+
+    IfStmt(std::unique_ptr<ASTNode> condition, std::unique_ptr<ASTNode> thenBranch, std::unique_ptr<ASTNode> elseBranch)
+        : condition(std::move(condition)), thenBranch(std::move(thenBranch)), elseBranch(std::move(elseBranch)) {}
+
+    void accept(ASTVisitor& visitor) override; // Allows the visitor to enter this node
+};
+
+class WhileStmt : public ASTNode {
+public:
+    std::unique_ptr<ASTNode> condition; // The test that keeps the loop running
+    std::unique_ptr<ASTNode> body;      // The code inside the loop to run
+
+    WhileStmt(std::unique_ptr<ASTNode> condition, std::unique_ptr<ASTNode> body)
+        : condition(std::move(condition)), body(std::move(body)) {}
+
+    void accept(ASTVisitor& visitor) override; // Allows the visitor to enter this node
+};
+
 
 
 #endif // AST_H
