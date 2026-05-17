@@ -42,7 +42,7 @@ Build the highly optimized executables. The build is explicitly configured with 
 cmake --build build
 ```
 
-## 💻 Running CVM++
+## Running CVM++
 
 Once compiled, you can run CVM++ in two different ways depending on your workflow.
 
