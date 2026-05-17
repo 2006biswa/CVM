@@ -130,6 +130,40 @@ void VM::interpret(Chunk* chunk) {
                 break;
             }
             
+            case Opcode::OP_JUMP: {
+                uint8_t high = currentChunk->code[ip++];
+                uint8_t low = currentChunk->code[ip++];
+                uint16_t distance = (high << 8) | low;
+                ip += distance;
+                break;
+            }
+
+            case Opcode::OP_JUMP_IF_FALSE: {
+                uint8_t high = currentChunk->code[ip++];
+                uint8_t low = currentChunk->code[ip++];
+                uint16_t distance = (high << 8) | low;
+                
+                Value condition = pop();
+                bool isFalse = false;
+                if (condition.isBool() && !std::get<bool>(condition.as)) isFalse = true;
+                // If it's not a bool, we could do truthiness, but let's stick to strict bool for now
+                // Actually, let's just assume false if it's explicitly boolean false or int 0
+                else if (condition.isInt() && std::get<int>(condition.as) == 0) isFalse = true;
+                
+                if (isFalse) {
+                    ip += distance;
+                }
+                break;
+            }
+
+            case Opcode::OP_LOOP: {
+                uint8_t high = currentChunk->code[ip++];
+                uint8_t low = currentChunk->code[ip++];
+                uint16_t distance = (high << 8) | low;
+                ip -= distance;
+                break;
+            }
+
             case Opcode::OP_PRINT: {
                 // Pop whatever is on top of the stack and print it to the screen!
                 Value value = pop();
