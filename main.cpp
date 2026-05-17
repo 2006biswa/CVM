@@ -32,6 +32,8 @@ void disassembleChunk(const Chunk& chunk) {
                 std::cout << ")" << std::endl;
                 break;
             }
+            case Opcode::OP_TRUE: std::cout << "OP_TRUE" << std::endl; break;
+            case Opcode::OP_FALSE: std::cout << "OP_FALSE" << std::endl; break;
             case Opcode::OP_ADD: std::cout << "OP_ADD" << std::endl; break;
             case Opcode::OP_SUB: std::cout << "OP_SUB" << std::endl; break;
             case Opcode::OP_MUL: std::cout << "OP_MUL" << std::endl; break;
