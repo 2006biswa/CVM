@@ -60,14 +60,19 @@ void Compiler::emitConstant(Value value) {
 // EXPRESSIONS (Math & Values)
 
 void Compiler::visit(LiteralExpr* expr) {
-    
-    int number = std::stoi(expr->value.lexeme);   //convert the string to number
-    
-    Value val;
-    val.type = ValueType::VAL_INT;
-    val.as = number;
-    
-    emitConstant(val);    // add OP_constant , then add value to the vault , then add index to the byte code
+    if (expr->value.type == TokenType::TRUE_KW) {
+        emitByte(static_cast<uint8_t>(Opcode::OP_TRUE));
+    } else if (expr->value.type == TokenType::FALSE_KW) {
+        emitByte(static_cast<uint8_t>(Opcode::OP_FALSE));
+    } else {
+        int number = std::stoi(expr->value.lexeme);   //convert the string to number
+        
+        Value val;
+        val.type = ValueType::VAL_INT;
+        val.as = number;
+        
+        emitConstant(val);    // add OP_constant , then add value to the vault , then add index to the byte code
+    }
 }
 
 void Compiler::visit(BinaryExpr* expr) {
