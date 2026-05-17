@@ -67,6 +67,11 @@ void disassembleChunk(const Chunk& chunk) {
                 std::cout << "OP_GET_GLOBAL    " << (int)index << " (Name: '" << std::get<std::string>(chunk.constants[index].as) << "')" << std::endl;
                 break;
             }
+            case Opcode::OP_SET_GLOBAL: {
+                uint8_t index = chunk.code[++i];
+                std::cout << "OP_SET_GLOBAL    " << (int)index << " (Name: '" << std::get<std::string>(chunk.constants[index].as) << "')" << std::endl;
+                break;
+            }
             case Opcode::OP_RETURN: std::cout << "OP_RETURN" << std::endl; break;
             default: std::cout << "Unknown Opcode: " << (int)instruction << std::endl; break;
         }
