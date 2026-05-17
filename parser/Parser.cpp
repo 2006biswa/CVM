@@ -116,3 +116,54 @@ std::unique_ptr<ASTNode> Parser::declaration() {
     return statement();
 }
 
+std::unique_ptr<ASTNode> Parser::statement() {
+    // 1. Is it a PRINT statement?
+    if (match({TokenType::PRINT})) {
+        std::unique_ptr<ASTNode> value = expression();
+        consume(TokenType::SEMICOLON, "Expect ';' after value.");
+        return std::make_unique<PrintStmt>(std::move(value));
+    }
+    
+    // 2. Is it a BLOCK { } of code?
+    if (match({TokenType::LEFT_BRACE})) {
+        std::vector<std::unique_ptr<ASTNode>> statements;
+        // Keep parsing statements until we hit the '}' closing brace
+        while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+            statements.push_back(declaration());
+        }
+        consume(TokenType::RIGHT_BRACE, "Expect '}' after block.");
+        return std::make_unique<BlockStmt>(std::move(statements));
+    }
+    
+    // 3. Is it an IF statement?
+    if (match({TokenType::IF})) {
+        consume(TokenType::LEFT_PAREN, "Expect '(' after 'if'.");
+        std::unique_ptr<ASTNode> condition = expression();
+        consume(TokenType::RIGHT_PAREN, "Expect ')' after if condition.");
+        
+        std::unique_ptr<ASTNode> thenBranch = statement();
+        std::unique_ptr<ASTNode> elseBranch = nullptr;
+        
+        if (match({TokenType::ELSE})) { // Optional else branch!
+            elseBranch = statement();
+        }
+        
+        return std::make_unique<IfStmt>(std::move(condition), std::move(thenBranch), std::move(elseBranch));
+    }
+    
+    // 4. Is it a WHILE loop?
+    if (match({TokenType::WHILE})) {
+        consume(TokenType::LEFT_PAREN, "Expect '(' after 'while'.");
+        std::unique_ptr<ASTNode> condition = expression();
+        consume(TokenType::RIGHT_PAREN, "Expect ')' after condition.");
+        std::unique_ptr<ASTNode> body = statement();
+        
+        return std::make_unique<WhileStmt>(std::move(condition), std::move(body));
+    }
+
+    // 5. If it's none of the above, it's just a raw math expression (like '5 + 5;')
+    std::unique_ptr<ASTNode> expr = expression();
+    consume(TokenType::SEMICOLON, "Expect ';' after expression.");
+    return expr;
+}
+
