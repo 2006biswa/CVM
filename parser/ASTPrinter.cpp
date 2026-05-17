@@ -39,9 +39,15 @@ void ASTPrinter::visit(VariableExpr* expr) {
     std::cout << expr->name.lexeme;
 }
 
-// ---------------------------------------------------------
+void ASTPrinter::visit(AssignExpr* expr) {
+    std::cout << "(assign " << expr->name.lexeme << " = ";
+    expr->value->accept(*this);
+    std::cout << ")";
+}
+
+
 // STATEMENTS (Actions)
-// ---------------------------------------------------------
+
 
 void ASTPrinter::visit(PrintStmt* stmt) {
     printIndent();
