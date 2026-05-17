@@ -33,6 +33,7 @@ private:
     std::unique_ptr<ASTNode> statement();
     
     std::unique_ptr<ASTNode> expression();
+    std::unique_ptr<ASTNode> assignment();
     std::unique_ptr<ASTNode> equality();
     std::unique_ptr<ASTNode> comparison();
     std::unique_ptr<ASTNode> term();
