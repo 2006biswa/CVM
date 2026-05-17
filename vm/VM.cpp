@@ -54,6 +54,22 @@ void VM::interpret(Chunk* chunk) {
                 break;
             }
             
+            case Opcode::OP_TRUE: {
+                Value val;
+                val.type = ValueType::VAL_BOOL;
+                val.as = true;
+                push(val);
+                break;
+            }
+
+            case Opcode::OP_FALSE: {
+                Value val;
+                val.type = ValueType::VAL_BOOL;
+                val.as = false;
+                push(val);
+                break;
+            }
+            
             case Opcode::OP_ADD: {
                 // Pop the top two values
                 Value b = pop();
