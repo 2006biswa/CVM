@@ -253,6 +253,10 @@ std::unique_ptr<ASTNode> Parser::primary() {
     if (match({TokenType::IDENTIFIER})) {
         return std::make_unique<VariableExpr>(previous());
     }
+    // If it's the 'input' keyword, return an InputExpr!
+    if (match({TokenType::INPUT})) {
+        return std::make_unique<InputExpr>();
+    }
     
     // If we hit a Token that is NOT a math expression, throw an error!
     throw std::runtime_error("Expect expression.");

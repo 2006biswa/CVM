@@ -76,6 +76,14 @@ public:
     void accept(ASTVisitor& visitor) override;
 };
 
+// Represents the 'input' keyword (which waits for user input and yields a value)
+class InputExpr : public ASTNode {
+public:
+    InputExpr() = default;
+
+    void accept(ASTVisitor& visitor) override;
+};
+
 // --- STATEMENT NODES (Actions that DO something, like 'print x;') ---
 
 class PrintStmt : public ASTNode {
@@ -138,6 +146,7 @@ public:
     virtual void visit(LiteralExpr* expr) = 0; 
     virtual void visit(VariableExpr* expr) = 0; 
     virtual void visit(AssignExpr* expr) = 0; 
+    virtual void visit(InputExpr* expr) = 0;
                                                             // a description for a visitor that it must write how to handle every single type of node
                                                             // we did this in order to prevent crashing of compiler
     virtual void visit(PrintStmt* stmt) = 0; 
@@ -161,6 +170,7 @@ inline void BinaryExpr::accept(ASTVisitor& visitor) { visitor.visit(this); }
 inline void LiteralExpr::accept(ASTVisitor& visitor) { visitor.visit(this); }
 inline void VariableExpr::accept(ASTVisitor& visitor) { visitor.visit(this); }
 inline void AssignExpr::accept(ASTVisitor& visitor) { visitor.visit(this); }
+inline void InputExpr::accept(ASTVisitor& visitor) { visitor.visit(this); }
 inline void PrintStmt::accept(ASTVisitor& visitor) { visitor.visit(this); }
 inline void VarDecl::accept(ASTVisitor& visitor) { visitor.visit(this); }
 inline void BlockStmt::accept(ASTVisitor& visitor) { visitor.visit(this); }

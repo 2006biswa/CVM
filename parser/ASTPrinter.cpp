@@ -45,6 +45,10 @@ void ASTPrinter::visit(AssignExpr* expr) {
     std::cout << ")";
 }
 
+void ASTPrinter::visit(InputExpr* expr) {
+    std::cout << "(input)";
+}
+
 
 // STATEMENTS (Actions)
 
