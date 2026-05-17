@@ -23,6 +23,7 @@ public:
     void visit(LiteralExpr* expr) override;
     void visit(VariableExpr* expr) override;
     void visit(AssignExpr* expr) override;
+    void visit(InputExpr* expr) override;
     
     void visit(PrintStmt* stmt) override;
     void visit(VarDecl* stmt) override;

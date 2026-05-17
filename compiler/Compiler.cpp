@@ -125,6 +125,10 @@ void Compiler::visit(AssignExpr* expr) {
     emitBytes(static_cast<uint8_t>(Opcode::OP_SET_GLOBAL), static_cast<uint8_t>(index));
 }
 
+void Compiler::visit(InputExpr* expr) {
+    emitByte(static_cast<uint8_t>(Opcode::OP_INPUT));
+}
+
 
 //  STATEMENTS (Actions) 
 
