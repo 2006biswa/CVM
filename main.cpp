@@ -55,7 +55,7 @@ void disassembleChunk(const Chunk& chunk) {
 }
 
 // We added this helper to test our new ASTPrinter AND Compiler!
-void runCode(const std::string& sourceCode) {
+void runCode(VM& vm, const std::string& sourceCode) {
     std::cout << "\n--- Source Code ---" << std::endl;
     std::cout << sourceCode<< std::endl;
     std::cout << "-------------------\n" << std::endl;
@@ -84,16 +84,12 @@ void runCode(const std::string& sourceCode) {
 
         // 6. Execute the Bytecode using our Virtual Machine!
         std::cout << "\n--- VM Output ---" << std::endl;
-        VM vm;
         vm.interpret(&chunk);
         std::cout << "-----------------" << std::endl;
     } else {
         std::cout << "Compilation Failed due to Syntax Error." << std::endl;
     }
 }
-
-
-
 
 void runFile(const char* path) {
     // Open the file
@@ -108,8 +104,9 @@ void runFile(const char* path) {
     buffer << file.rdbuf();
     std::string sourceCode = buffer.str();
 
-    // Run it!
-    runCode(sourceCode);
+    // Create a VM and run it!
+    VM vm;
+    runCode(vm, sourceCode);
 }
 
 void runPrompt() {
@@ -117,6 +114,10 @@ void runPrompt() {
     std::cout << "Welcome to CVM++ Interactive REPL!" << std::endl;
     std::cout << "Type your code below (Ctrl+C to exit)." << std::endl;
     
+    // Create ONE Virtual Machine for the entire session!
+    // This allows it to remember variables between lines.
+    VM vm;
+
     // Loop infinitely, asking for code
     while (true) {
         std::cout << "> ";
@@ -131,14 +132,14 @@ void runPrompt() {
         if (line.empty()) continue;
         
         // Run the single line of code!
-        runCode(line);
+        runCode(vm, line);
     }
 }
 
 int main(int argc, char* argv[]) {
-    
-    // the user decides in the terminal which mode he wants to use 
-    
+  
+    // The user decides in the terminal which mode he/she wants to operate in 
+   
     
     if (argc == 1) {
         // If they just run '.\cvm.exe', start the Interactive Prompt
@@ -149,11 +150,10 @@ int main(int argc, char* argv[]) {
         runFile(argv[1]);
     } 
     else {
-        // Too many arguments!
+        // Too many arguments
         std::cout << "Usage: cvm [path to script]" << std::endl;
         return 64; // Standard exit code for usage error
     }
 
     return 0;
 }
-
