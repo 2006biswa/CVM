@@ -150,33 +150,78 @@ void Compiler::visit(BlockStmt* stmt) {
 }
 
 void Compiler::visit(IfStmt* stmt) {
-    // IF statements are complex. We have to "JUMP" over the code if the test is false.
-    // (We will implement exact Jump distances later when the VM is built!)
-    
-    // 1. Compile the test (e.g. x < 10)
+    // 1. Compile the condition
     stmt->condition->accept(*this);
     
-    // 2. (Placeholder) Jump if false
-    emitByte(static_cast<uint8_t>(Opcode::OP_JUMP_IF_FALSE));
-    emitByte(0); // Dummy distance
+    // 2. Emit the JUMP_IF_FALSE instruction with a dummy 2-byte distance.
+    // It returns the offset of the dummy bytes so we can patch them later!
+    int thenJump = emitJump(static_cast<uint8_t>(Opcode::OP_JUMP_IF_FALSE));
     
-    // 3. The code to run if TRUE
+    // 3. Compile the "Then" branch
     stmt->thenBranch->accept(*this);
+    
+    // 4. Emit an unconditional JUMP over the "Else" branch (if it exists)
+    int elseJump = emitJump(static_cast<uint8_t>(Opcode::OP_JUMP));
+    
+    // 5. Now we know how big the "Then" branch is. Patch the false jump!
+    patchJump(thenJump);
+    
+    // 6. Compile the "Else" branch (if there is one)
+    if (stmt->elseBranch) {
+        stmt->elseBranch->accept(*this);
+    }
+    
+    // 7. Now we know how big the "Else" branch is. Patch the unconditional jump!
+    patchJump(elseJump);
 }
 
 void Compiler::visit(WhileStmt* stmt) {
-    // WHILE loops jump backwards!
-    // (We will implement exact Jump distances later when the VM is built!)
+    // 1. Record the exact offset where the loop starts so we know where to jump back to!
+    int loopStart = currentChunk.code.size();
     
+    // 2. Compile the condition
     stmt->condition->accept(*this);
     
-    // Jump over the body if the loop is finished
-    emitByte(static_cast<uint8_t>(Opcode::OP_JUMP_IF_FALSE));
-    emitByte(0); // Dummy distance
+    // 3. Jump over the body if the condition is false
+    int exitJump = emitJump(static_cast<uint8_t>(Opcode::OP_JUMP_IF_FALSE));
     
+    // 4. Compile the body
     stmt->body->accept(*this);
     
-    // Jump back to the start!
+    // 5. Emit a backward jump to the loopStart
+    emitLoop(loopStart);
+    
+    // 6. Patch the exit jump so if the condition is false, it lands here!
+    patchJump(exitJump);
+}
+
+// --- Control Flow Helpers ---
+
+int Compiler::emitJump(uint8_t instruction) {
+    emitByte(instruction);
+    // Write two dummy bytes (0xff) to hold the space for the 16-bit jump offset
+    emitByte(0xff);
+    emitByte(0xff);
+    // Return the offset of the first dummy byte
+    return currentChunk.code.size() - 2;
+}
+
+void Compiler::patchJump(int offset) {
+    // Calculate how far to jump. 
+    // It's the total bytecode size MINUS the offset we saved, MINUS the 2 bytes of the jump itself.
+    int jumpDistance = currentChunk.code.size() - offset - 2;
+    
+    // Split the 16-bit distance into two 8-bit bytes
+    currentChunk.code[offset] = (jumpDistance >> 8) & 0xff;
+    currentChunk.code[offset + 1] = jumpDistance & 0xff;
+}
+
+void Compiler::emitLoop(int loopStart) {
     emitByte(static_cast<uint8_t>(Opcode::OP_LOOP));
-    emitByte(0); // Dummy distance
+    
+    // Calculate distance BACKWARDS
+    int jumpDistance = currentChunk.code.size() - loopStart + 2; // +2 for the loop offset bytes themselves
+    
+    emitByte((jumpDistance >> 8) & 0xff);
+    emitByte(jumpDistance & 0xff);
 }
