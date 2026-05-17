@@ -64,6 +64,18 @@ public:
     void accept(ASTVisitor& visitor) override; // Allows the visitor to enter this node
 };
 
+// Represents updating an existing variable (e.g., 'x = 20')
+class AssignExpr : public ASTNode {
+public:
+    Token name; // The variable being updated (e.g., 'x')
+    std::unique_ptr<ASTNode> value; // The new value to store (e.g., '20')
+
+    AssignExpr(Token name, std::unique_ptr<ASTNode> value) 
+        : name(name), value(std::move(value)) {}
+
+    void accept(ASTVisitor& visitor) override;
+};
+
 // --- STATEMENT NODES (Actions that DO something, like 'print x;') ---
 
 class PrintStmt : public ASTNode {
@@ -125,6 +137,7 @@ public:
     virtual void visit(BinaryExpr* expr) = 0; 
     virtual void visit(LiteralExpr* expr) = 0; 
     virtual void visit(VariableExpr* expr) = 0; 
+    virtual void visit(AssignExpr* expr) = 0; 
                                                             // a description for a visitor that it must write how to handle every single type of node
                                                             // we did this in order to prevent crashing of compiler
     virtual void visit(PrintStmt* stmt) = 0; 
@@ -147,6 +160,7 @@ public:
 inline void BinaryExpr::accept(ASTVisitor& visitor) { visitor.visit(this); }
 inline void LiteralExpr::accept(ASTVisitor& visitor) { visitor.visit(this); }
 inline void VariableExpr::accept(ASTVisitor& visitor) { visitor.visit(this); }
+inline void AssignExpr::accept(ASTVisitor& visitor) { visitor.visit(this); }
 inline void PrintStmt::accept(ASTVisitor& visitor) { visitor.visit(this); }
 inline void VarDecl::accept(ASTVisitor& visitor) { visitor.visit(this); }
 inline void BlockStmt::accept(ASTVisitor& visitor) { visitor.visit(this); }
