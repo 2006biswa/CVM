@@ -4,6 +4,8 @@
 #include <iostream>
 #include <string>
 #include <iomanip> // For pretty printing
+#include <fstream>
+#include <sstream>
 
 // Include all the core modules of the CVM++ pipeline
 #include "lexer/Lexer.h"
@@ -55,7 +57,8 @@ void disassembleChunk(const Chunk& chunk) {
 // We added this helper to test our new ASTPrinter AND Compiler!
 void runCode(const std::string& sourceCode) {
     std::cout << "\n--- Source Code ---" << std::endl;
-    std::cout << sourceCode << "-------------------\n" << std::endl;
+    std::cout << sourceCode<< std::endl;
+    std::cout << "-------------------\n" << std::endl;
 
     // 1. The Lexer chops the string into Tokens
     Lexer lexer(sourceCode);
@@ -89,44 +92,68 @@ void runCode(const std::string& sourceCode) {
     }
 }
 
+
+
+
+void runFile(const char* path) {
+    // Open the file
+    std::ifstream file(path);
+    if (!file.is_open()) {
+        std::cerr << "Could not open file: " << path << std::endl;
+        exit(74); // Standard exit code for IO error
+    }
+
+    // Read the entire file into a string
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    std::string sourceCode = buffer.str();
+
+    // Run it!
+    runCode(sourceCode);
+}
+
+void runPrompt() {
+    std::string line;
+    std::cout << "Welcome to CVM++ Interactive REPL!" << std::endl;
+    std::cout << "Type your code below (Ctrl+C to exit)." << std::endl;
+    
+    // Loop infinitely, asking for code
+    while (true) {
+        std::cout << "> ";
+        
+        // Read a line from the user
+        if (!std::getline(std::cin, line)) {
+            std::cout << std::endl;
+            break; // Exit if they hit EOF (Ctrl+D/Ctrl+Z)
+        }
+        
+        // If the line is empty, skip it
+        if (line.empty()) continue;
+        
+        // Run the single line of code!
+        runCode(line);
+    }
+}
+
 int main(int argc, char* argv[]) {
     
-    // TODO 1: Parse command-line arguments.
-    // If argc == 1, start the interactive REPL (Read-Eval-Print Loop).
-    // If argc == 2, read the file specified by argv[1] and run it.
-    // Otherwise, print usage instructions and exit.
-   
-    // TODO 2: In REPL mode:
-    // - Loop infinitely:
-    //   - Print a prompt (e.g., "> ").
-    //   - Read a line of input using std::getline.
-    //   - Pass the input to the Lexer, then Parser, Compiler, and VM.
-   
-    // TODO 3: In File Runner mode:
-    // - Open the file and read its entire contents into a std::string.
-    // - Pass the string to the compilation pipeline.
+    // the user decides in the terminal which mode he wants to use 
     
-    // General Pipeline Example (Do not write the code yet, just structure):
-    // 1. Lexer lexer(sourceCode);
-    // 2. auto tokens = lexer.tokenize();
-    // 3. Parser parser(tokens);
-    // 4. auto ast = parser.parse();
-    // 5. Compiler compiler;
-    // 6. auto bytecode = compiler.compile(ast.get());
-    // 7. VM vm;
-    // 8. vm.interpret(bytecode);
-
-
-    std::cout << "Welcome to CVM++! Structure initialized." << std::endl;
-
-    //  QUICK TEST FOR THE COMPILER
-    // Let's test math, variables, and printing all at once!
-    std::string testCode = 
-        "let x = 5 + 5 * 2;\n"
-        "let y = x + 10;\n"
-        "print y;\n";
-
-    runCode(testCode);
+    
+    if (argc == 1) {
+        // If they just run '.\cvm.exe', start the Interactive Prompt
+        runPrompt();
+    } 
+    else if (argc == 2) {
+        // If they run '.\cvm.exe script.cvm', run the file
+        runFile(argv[1]);
+    } 
+    else {
+        // Too many arguments!
+        std::cout << "Usage: cvm [path to script]" << std::endl;
+        return 64; // Standard exit code for usage error
+    }
 
     return 0;
 }
+
