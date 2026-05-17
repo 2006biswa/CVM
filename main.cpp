@@ -40,6 +40,29 @@ void disassembleChunk(const Chunk& chunk) {
             case Opcode::OP_DIV: std::cout << "OP_DIV" << std::endl; break;
             case Opcode::OP_EQUAL: std::cout << "OP_EQUAL" << std::endl; break;
             case Opcode::OP_LESS: std::cout << "OP_LESS" << std::endl; break;
+            
+            case Opcode::OP_JUMP: {
+                uint8_t high = chunk.code[++i];
+                uint8_t low = chunk.code[++i];
+                uint16_t distance = (high << 8) | low;
+                std::cout << "OP_JUMP          +" << distance << " -> " << (i + 1 + distance) << std::endl;
+                break;
+            }
+            case Opcode::OP_JUMP_IF_FALSE: {
+                uint8_t high = chunk.code[++i];
+                uint8_t low = chunk.code[++i];
+                uint16_t distance = (high << 8) | low;
+                std::cout << "OP_JUMP_IF_FALSE +" << distance << " -> " << (i + 1 + distance) << std::endl;
+                break;
+            }
+            case Opcode::OP_LOOP: {
+                uint8_t high = chunk.code[++i];
+                uint8_t low = chunk.code[++i];
+                uint16_t distance = (high << 8) | low;
+                std::cout << "OP_LOOP          -" << distance << " -> " << (i + 1 - distance) << std::endl;
+                break;
+            }
+            
             case Opcode::OP_PRINT: std::cout << "OP_PRINT" << std::endl; break;
             case Opcode::OP_DEFINE_GLOBAL: {
                 uint8_t index = chunk.code[++i];
