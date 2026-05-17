@@ -39,6 +39,11 @@ private:
     
     // Helper method to write a value into the vault, and emit the OP_CONSTANT instruction
     void emitConstant(Value value);
+
+    // Control Flow Helpers
+    int emitJump(uint8_t instruction);
+    void patchJump(int offset);
+    void emitLoop(int loopStart);
 };
 
 #endif // COMPILER_H
