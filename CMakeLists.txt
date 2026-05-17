@@ -19,3 +19,8 @@ file(GLOB_RECURSE SOURCES
 )
 
 add_executable(cvm main.cpp ${SOURCES})
+add_executable(cvm_lexer main_lexer.cpp ${SOURCES})
+add_executable(cvm_parser main_parser.cpp ${SOURCES})
+add_executable(cvm_compiler main_compiler.cpp ${SOURCES})
+add_executable(cvm_vm main_vm.cpp ${SOURCES})
+add_executable(cvm_final main_final.cpp ${SOURCES})
