@@ -13,18 +13,19 @@
 
 enum class ValueType {
     VAL_BOOL,
-    VAL_INT
-    // You can easily add VAL_OBJ later if you want to support strings/arrays
+    VAL_INT,
+    VAL_STRING // Added to support variable names!
 };
 
 // Represents any value inside the Virtual Machine
 struct Value {
     ValueType type;
-    std::variant<bool, int> as;
+    std::variant<bool, int, std::string> as;
     
     // Helper methods for safe type checking
     bool isBool() const { return type == ValueType::VAL_BOOL; }
     bool isInt() const { return type == ValueType::VAL_INT; }
+    bool isString() const { return type == ValueType::VAL_STRING; }
 };
 
 // ---------------------------------------------------------
