@@ -109,6 +109,22 @@ void Compiler::visit(VariableExpr* expr) {
     emitBytes(static_cast<uint8_t>(Opcode::OP_GET_GLOBAL), static_cast<uint8_t>(index));
 }
 
+void Compiler::visit(AssignExpr* expr) {
+    // 1. Compile the new value (e.g., the '20' in x = 20)
+    // This will push the evaluated value onto the stack
+    expr->value->accept(*this);
+    
+    // 2. Save the variable name into the vault
+    Value nameVal;
+    nameVal.type = ValueType::VAL_STRING;
+    nameVal.as = expr->name.lexeme;
+    
+    int index = currentChunk.addConstant(nameVal);
+    
+    // 3. Emit the instruction to update the global variable
+    emitBytes(static_cast<uint8_t>(Opcode::OP_SET_GLOBAL), static_cast<uint8_t>(index));
+}
+
 
 //  STATEMENTS (Actions) 
 
