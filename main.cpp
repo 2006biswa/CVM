@@ -7,8 +7,33 @@
 // Include all the core modules of the CVM++ pipeline
 #include "lexer/Lexer.h"
 #include "parser/Parser.h"
+#include "parser/ASTPrinter.h"
 #include "compiler/Compiler.h"
 #include "vm/VM.h"
+
+// We added this helper to test our new ASTPrinter!
+void runCode(const std::string& sourceCode) {
+    std::cout << "\n--- Compiling Code ---" << std::endl;
+    std::cout << sourceCode << "----------------------\n" << std::endl;
+
+    // 1. The Lexer chops the string into Tokens
+    Lexer lexer(sourceCode);
+    auto tokens = lexer.tokenize();
+
+    // 2. The Parser builds the 2D Tree
+    Parser parser(tokens);
+    auto ast = parser.parse();
+
+    // 3. If parsing was successful, print the Tree!
+    if (ast) {
+        std::cout << "--- AST Tree ---" << std::endl;
+        ASTPrinter printer;
+        printer.print(ast.get());
+        std::cout << "----------------" << std::endl;
+    } else {
+        std::cout << "Compilation Failed due to Syntax Error." << std::endl;
+    }
+}
 
 int main(int argc, char* argv[]) {
     // ---------------------------------------------------------
@@ -45,5 +70,17 @@ int main(int argc, char* argv[]) {
     // ---------------------------------------------------------
 
     std::cout << "Welcome to CVM++! Structure initialized." << std::endl;
+
+    // A quick hardcoded test to prove our Parser works!
+    std::string testCode = 
+        "let x = 5 + 5 * 2;\n"
+        "let y = x + 10;\n"
+        "print y;\n"
+        "if (x < y) {\n"
+        "    print x;\n"
+        "}\n";
+
+    runCode(testCode);
+
     return 0;
 }
