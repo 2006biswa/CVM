@@ -90,7 +90,7 @@ void runCode(VM& vm, const std::string& sourceCode) {
         std::cout << "Compilation Failed due to Syntax Error." << std::endl;
     }
 }
-
+//FILE MODE
 void runFile(const char* path) {
     // Open the file
     std::ifstream file(path);
@@ -108,7 +108,7 @@ void runFile(const char* path) {
     VM vm;
     runCode(vm, sourceCode);
 }
-
+// INTERACTIVE MODE (REPL)
 void runPrompt() {
     std::string line;
     std::cout << "Welcome to CVM++ Interactive REPL!" << std::endl;
