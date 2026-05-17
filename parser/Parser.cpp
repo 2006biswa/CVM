@@ -167,3 +167,68 @@ std::unique_ptr<ASTNode> Parser::statement() {
     return expr;
 }
 
+//  EXPRESSIONS (Math and Logic)
+std::unique_ptr<ASTNode> Parser::expression() {
+    // The top-level expression just passes down to equality
+    return equality();
+}
+
+std::unique_ptr<ASTNode> Parser::equality() {
+    std::unique_ptr<ASTNode> expr = comparison();                   // suppose 5*5 +5/5 < 5*6 +7/1 
+
+  
+    while (match({TokenType::EQUAL_EQUAL})) {                      
+        Token op = previous();                                           // ==
+        std::unique_ptr<ASTNode> right = comparison();                    // 2<3
+        expr = std::make_unique<BinaryExpr>(std::move(expr), op, std::move(right)); 
+    }
+    return expr;
+}
+
+std::unique_ptr<ASTNode> Parser::comparison() {
+    std::unique_ptr<ASTNode> expr = term();                      // 5*5 + 5/5  
+
+    
+    while (match({TokenType::LESS})) {                           
+        Token op = previous();                                  // <      
+        std::unique_ptr<ASTNode> right = term();                // 5*6 + 7/1   
+        expr = std::make_unique<BinaryExpr>(std::move(expr), op, std::move(right)); 
+    }
+    return expr;
+}
+
+std::unique_ptr<ASTNode> Parser::term() {
+    std::unique_ptr<ASTNode> expr = factor();       // 5*5
+
+    while (match({TokenType::MINUS, TokenType::PLUS})) { 
+        Token op = previous();                    // +
+        std::unique_ptr<ASTNode> right = factor();    // 5/5
+        expr = std::make_unique<BinaryExpr>(std::move(expr), op, std::move(right)); 
+    }
+    return expr;
+}
+
+std::unique_ptr<ASTNode> Parser::factor() {
+    std::unique_ptr<ASTNode> expr = primary();                     //5
+
+    while (match({TokenType::SLASH, TokenType::STAR})) {       
+        Token op = previous();                                            //* 
+        std::unique_ptr<ASTNode> right = primary();                    //5
+        expr = std::make_unique<BinaryExpr>(std::move(expr), op, std::move(right)); 
+    }
+    return expr;
+}
+
+std::unique_ptr<ASTNode> Parser::primary() {
+    // If it's just a raw number, return a LiteralExpr!
+    if (match({TokenType::NUMBER})) {
+        return std::make_unique<LiteralExpr>(previous());
+    }
+    // If it's a variable name, return a VariableExpr!
+    if (match({TokenType::IDENTIFIER})) {
+        return std::make_unique<VariableExpr>(previous());
+    }
+    
+    // If we hit a Token that is NOT a math expression, throw an error!
+    throw std::runtime_error("Expect expression.");
+}
