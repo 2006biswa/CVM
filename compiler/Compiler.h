@@ -1,39 +1,44 @@
 #ifndef COMPILER_H
 #define COMPILER_H
 
-#include <vector>
-#include <cstdint>
 #include "../parser/AST.h"
+#include "../common/Chunk.h"
+#include "../vm/Opcode.h" // We need to know what instructions we can emit!
 
-// ---------------------------------------------------------
-// TODO 1: High-Level Compiler Architecture
-// Make the Compiler inherit from ASTVisitor.
-// When it visits an AST node (e.g., visit(BinaryExpr*)), 
-// it emits the corresponding Bytecode into its array.
-// ---------------------------------------------------------
+// The Compiler acts as a "Visitor" that walks down the 2D Abstract Syntax Tree.
+// As it visits each node, it emits raw 1D Bytecode (OpCodes) into a Chunk.
 class Compiler : public ASTVisitor {
+    //this compiler is basically a visitor
 public:
     Compiler();
-    std::vector<uint8_t> compile(ASTNode* ast);
- 
-    // Visitor implementation methods (TODO: uncomment and override these)
-    // void visit(BinaryExpr* expr) override;
-    // void visit(LiteralExpr* expr) override;
-    // void visit(PrintStmt* stmt) override;
+    
+    //this is the function used by main.cpp
+    //it takes the root of the AST and returns a fully packaged Chunk
+    Chunk compile(ASTNode* ast);
+
+    
+    // The Visitor Methods (Translating AST Nodes to Bytecode)
+   // aa must if u created a visitor need to handle all the nodes of the tree
+    void visit(BinaryExpr* expr) override;
+    void visit(LiteralExpr* expr) override;
+    void visit(VariableExpr* expr) override;
+    
+    void visit(PrintStmt* stmt) override;
+    void visit(VarDecl* stmt) override;
+    void visit(BlockStmt* stmt) override;
+    void visit(IfStmt* stmt) override;
+    void visit(WhileStmt* stmt) override;
 
 private:
-    std::vector<uint8_t> bytecode;
+    // The current Chunk we are writing bytecode and constants into
+    Chunk currentChunk;
     
-    // ---------------------------------------------------------
-    // TODO 2: Debugging Features (For Deliverables)
-    // As per your goals, you need to optionally "Show the compiled Bytecode".
-    // Consider adding a method like `disassembleChunk()`
-    // to print the opcodes in a human-readable format.
-    // ---------------------------------------------------------
-
-    // Helper methods to write raw bytes
+    // Helper methods to make writing raw bytes easier
     void emitByte(uint8_t byte);
     void emitBytes(uint8_t byte1, uint8_t byte2);
+    
+    // Helper method to write a value into the vault, and emit the OP_CONSTANT instruction
+    void emitConstant(Value value);
 };
 
 #endif // COMPILER_H
