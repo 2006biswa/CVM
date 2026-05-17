@@ -192,6 +192,18 @@ void VM::interpret(Chunk* chunk) {
                 push(globals[variableName]);
                 break;
             }
+
+            case Opcode::OP_SET_GLOBAL: {
+                uint8_t nameIndex = currentChunk->code[ip++];
+                std::string variableName = std::get<std::string>(currentChunk->constants[nameIndex].as);
+                
+                // If it doesn't exist, we could throw an error, but let's just create/update it
+                globals[variableName] = peek(0);
+                
+                // Note: We DO NOT pop the value off the stack! 
+                // Assignment is an expression, so 'x = 20' yields '20'.
+                break;
+            }
             
             case Opcode::OP_RETURN: {
                 // The program is finished! Exit the infinite loop.
