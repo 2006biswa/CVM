@@ -57,6 +57,7 @@ void disassembleChunk(const Chunk& chunk) {
             }
             
             case Opcode::OP_PRINT: std::cout << "OP_PRINT" << std::endl; break;
+            case Opcode::OP_INPUT: std::cout << "OP_INPUT" << std::endl; break;
             case Opcode::OP_DEFINE_GLOBAL: {
                 uint8_t index = chunk.code[++i];
                 std::cout << "OP_DEFINE_GLOBAL " << (int)index << " (Name: '" << std::get<std::string>(chunk.constants[index].as) << "')" << std::endl;
