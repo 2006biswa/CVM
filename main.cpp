@@ -78,6 +78,12 @@ void runCode(const std::string& sourceCode) {
 
         // 5. Disassemble the chunk to visually prove the bytecode is correct!
         disassembleChunk(chunk);
+
+        // 6. Execute the Bytecode using our Virtual Machine!
+        std::cout << "\n--- VM Output ---" << std::endl;
+        VM vm;
+        vm.interpret(&chunk);
+        std::cout << "-----------------" << std::endl;
     } else {
         std::cout << "Compilation Failed due to Syntax Error." << std::endl;
     }
