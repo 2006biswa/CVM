@@ -103,6 +103,33 @@ void VM::interpret(Chunk* chunk) {
                 break;
             }
             
+            case Opcode::OP_DIV: {
+                Value b = pop(); Value a = pop();
+                if (a.isInt() && b.isInt()) {
+                    Value result; result.type = ValueType::VAL_INT; result.as = std::get<int>(a.as) / std::get<int>(b.as);
+                    push(result);
+                }
+                break;
+            }
+
+            case Opcode::OP_EQUAL: {
+                Value b = pop(); Value a = pop();
+                if (a.isInt() && b.isInt()) {
+                    Value result; result.type = ValueType::VAL_BOOL; result.as = (std::get<int>(a.as) == std::get<int>(b.as));
+                    push(result);
+                }
+                break;
+            }
+
+            case Opcode::OP_LESS: {
+                Value b = pop(); Value a = pop();
+                if (a.isInt() && b.isInt()) {
+                    Value result; result.type = ValueType::VAL_BOOL; result.as = (std::get<int>(a.as) < std::get<int>(b.as));
+                    push(result);
+                }
+                break;
+            }
+            
             case Opcode::OP_PRINT: {
                 // Pop whatever is on top of the stack and print it to the screen!
                 Value value = pop();
