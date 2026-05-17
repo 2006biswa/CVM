@@ -220,8 +220,8 @@ std::unique_ptr<ASTNode> Parser::factor() {
 }
 
 std::unique_ptr<ASTNode> Parser::primary() {
-    // If it's just a raw number, return a LiteralExpr!
-    if (match({TokenType::NUMBER})) {
+    // If it's a number OR a boolean, return a LiteralExpr!
+    if (match({TokenType::NUMBER, TokenType::TRUE_KW, TokenType::FALSE_KW})) {
         return std::make_unique<LiteralExpr>(previous());
     }
     // If it's a variable name, return a VariableExpr!
