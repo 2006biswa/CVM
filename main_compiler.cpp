@@ -31,6 +31,8 @@ void disassembleChunk(const Chunk& chunk) {
             case Opcode::OP_SUB: std::cout << "OP_SUB" << std::endl; break;
             case Opcode::OP_MUL: std::cout << "OP_MUL" << std::endl; break;
             case Opcode::OP_DIV: std::cout << "OP_DIV" << std::endl; break;
+            case Opcode::OP_EQUAL: std::cout << "OP_EQUAL" << std::endl; break;
+            case Opcode::OP_LESS: std::cout << "OP_LESS" << std::endl; break;
             case Opcode::OP_PRINT: std::cout << "OP_PRINT" << std::endl; break;
             case Opcode::OP_DEFINE_GLOBAL: {
                 uint8_t index = chunk.code[++i];
