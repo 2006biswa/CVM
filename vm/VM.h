@@ -35,7 +35,7 @@ private:
     
     void push(Value value);          
     Value pop();                    
-    Value peek(int distance = 0);   // Look at the stack without removing anything (0 is the top, 1 is just below the top)
+    Value peek(int distance = 0);  // Look at the stack without removing anything (0 is the top, 1 is just below the top)
 };
 
 #endif // VM_H

@@ -173,6 +173,34 @@ void VM::interpret(Chunk* chunk) {
                 break;
             }
             
+            case Opcode::OP_INPUT: {
+                std::string userInput;
+                std::getline(std::cin, userInput);
+
+                Value value;
+                try {
+                    // Try to convert to integer
+                    size_t pos;
+                    int intVal = std::stoi(userInput, &pos);
+                    // Check if the entire string was consumed (it's purely a number)
+                    if (pos == userInput.length()) {
+                        value.type = ValueType::VAL_INT;
+                        value.as = intVal;
+                    } else {
+                        // Contains letters after the number, treat as string
+                        value.type = ValueType::VAL_STRING;
+                        value.as = userInput;
+                    }
+                } catch (...) {
+                    // Conversion failed, it's definitely a string
+                    value.type = ValueType::VAL_STRING;
+                    value.as = userInput;
+                }
+                
+                push(value);
+                break;
+            }
+            
             case Opcode::OP_DEFINE_GLOBAL: {
                 // Get the name of the variable from the Vault
                 uint8_t nameIndex = currentChunk->code[ip++];
