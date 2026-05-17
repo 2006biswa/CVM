@@ -60,3 +60,59 @@ Token Parser::consume(TokenType type, const std::string& message) {
     throw std::runtime_error("[Line " + std::to_string(errorToken.line) + "] Syntax Error: " + message);
 }
 
+
+// the only function main.cpp cares about. When it wants to build the tree, it calls parse().
+
+std::unique_ptr<ASTNode> Parser::parse() {
+    try {
+       
+        std::vector<std::unique_ptr<ASTNode>> allStatements = program(); // Get all statements until EOF like printstm ,varaiabledclr etc
+        
+        // combine all into the blockstmnt which is the root of our tree
+        return std::make_unique<BlockStmt>(std::move(allStatements));    
+        
+    } catch (const std::runtime_error& error) {
+        // If our strict 'consume()' teacher threw an error, we catch it here and crash gracefully
+        std::cerr << "Parser crashed: " << error.what() << std::endl;    // Print the error safely
+        return nullptr;                                                  // Stop parsing
+    }
+}
+
+
+
+
+//  Implement the recursive descent methods here.
+
+
+
+//  (Actions that do things)
+
+std::vector<std::unique_ptr<ASTNode>> Parser::program() {
+    std::vector<std::unique_ptr<ASTNode>> statements;
+                                                         //ONE MIght think what happened to the expression nodes
+                                                        // but remember those are tucked inside the statement nodes only hence they are handled as well
+    while (!isAtEnd()) {
+        statements.push_back(declaration());
+    }
+    return statements;
+}
+
+std::unique_ptr<ASTNode> Parser::declaration() {
+    // If the next token is 'let', we are creating a new variable!
+    if (match({TokenType::LET})) {
+        Token name = consume(TokenType::IDENTIFIER, "Expect variable name.");
+        
+        std::unique_ptr<ASTNode> initializer = nullptr;
+        // Check if there is an '=' sign
+        if (match({TokenType::EQUAL})) {
+            initializer = expression(); // Build the math logic for the value
+        }
+        
+        consume(TokenType::SEMICOLON, "Expect ';' after variable declaration.");
+        return std::make_unique<VarDecl>(name, std::move(initializer));
+    }
+    
+    // If it's not a variable declaration, it must be a normal statement
+    return statement();
+}
+

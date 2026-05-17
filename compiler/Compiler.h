@@ -15,7 +15,7 @@ class Compiler : public ASTVisitor {
 public:
     Compiler();
     std::vector<uint8_t> compile(ASTNode* ast);
-
+ 
     // Visitor implementation methods (TODO: uncomment and override these)
     // void visit(BinaryExpr* expr) override;
     // void visit(LiteralExpr* expr) override;
