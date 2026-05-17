@@ -169,8 +169,33 @@ std::unique_ptr<ASTNode> Parser::statement() {
 
 //  EXPRESSIONS (Math and Logic)
 std::unique_ptr<ASTNode> Parser::expression() {
-    // The top-level expression just passes down to equality
-    return equality();
+    // The top-level expression just passes down to assignment
+    return assignment();
+}
+
+std::unique_ptr<ASTNode> Parser::assignment() {
+    // Parse the left-hand side first
+    std::unique_ptr<ASTNode> expr = equality();
+
+    // If we see an '=', we know we are assigning a value!
+    if (match({TokenType::EQUAL})) {
+        Token equals = previous(); // The '=' token
+        
+        // Recursively parse the right-hand side (to allow x = y = 20)
+        std::unique_ptr<ASTNode> value = assignment();
+
+        // The left-hand side MUST be a variable (we can't do '5 = 10')
+        VariableExpr* varExpr = dynamic_cast<VariableExpr*>(expr.get());
+        if (varExpr) {
+            Token name = varExpr->name;
+            return std::make_unique<AssignExpr>(name, std::move(value));
+        }
+
+        // If it's not a variable, we throw an error!
+        throw std::runtime_error("Invalid assignment target.");
+    }
+
+    return expr;
 }
 
 std::unique_ptr<ASTNode> Parser::equality() {
